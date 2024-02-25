@@ -17,6 +17,21 @@ const getTx = async () => {
   }
 };
 
+// Function to perform GET request
+const getData = async (namespace, hash) => {
+  try {
+    const response = await fetch(`${rollupServer}/get_data/${namespace}/${hash}`);
+    if (!response.ok) {
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const content = await response.arrayBuffer(); // or .json() if you expect JSON response
+
+    return content; // This might be useful if you want to do something with the response
+  } catch (error) {
+    console.error(`Error fetching data: ${error.message}`);
+  }
+};
+
 const hint = async(str) => {
   try {
     const response = await fetch(`${rollupServer}/hint`, {
@@ -60,6 +75,7 @@ const finishTx = async () => {
 // Execute the functions
 (async () => {
   await hint("l1-block-header 0x6e4dd5b03a4fa7b85be4d6bd78bf641cf2fd1de92c8eb9b673c14edd349258d5");
+  console.log("data is: " + await getData("keccak256", "6e4dd5b03a4fa7b85be4d6bd78bf641cf2fd1de92c8eb9b673c14edd349258d5"));
   console.log("tx is: " + await getTx());
   await finishTx();
 })();
